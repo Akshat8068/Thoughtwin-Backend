@@ -1,20 +1,34 @@
-const register=async (req,res)=>{
-    const {name,email,password,address}=req.body
-    if(!name||!email||!password){
-        res.status(400).json({
-            msg:"Please Fill req Details, and Req details are name email password"
+import User from "../models/userModel.js"
+
+const getUsers=async(req,res)=>{
+    const users=await User.find()
+    if(!users){
+       return res.status(404).json({
+            msg:"No Users"
         })
     }
-    res.status(200).json({
-        msg:"Register API"
-    })
+    const data =users.map((user)=>({
+        id:user._id,
+        name:user.name
+    }))
+    res.status(200).json(data)
+  
 }
-const login=async (req,res)=>{
-    res.status(200).json({
-        msg:"login API"
-    })
+const getUser=async(req,res)=>{
+    const user=await User.findById(req.params.id)
+    if(!user){
+        res.status(404).json({
+            msg:"No User"
+        })
+    }
+    else{
+       res.status(200).json({
+            id:user._id,
+            name:user.name,
+            address:user.address
+        })
+    }
 }
 
-const userController={register,login}
-
+const userController={getUser,getUsers}
 export default userController
