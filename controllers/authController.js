@@ -55,6 +55,6 @@ const genrateToken=(id)=>{
 
 }
 
-const userController={register,login}
+const authController={register,login}
 
-export default userController
+export default authController
