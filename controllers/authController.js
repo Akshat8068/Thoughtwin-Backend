@@ -4,11 +4,7 @@ import bcrypt from "bcryptjs"
 import cookiesoptions from "../utlis/cookieOptions.js"
 const register = async (req, res) => {
     const { name, email, password, address } = req.body
-    if (!name || !email || !password) {
-        return res.status(400).json({
-            msg: "Please Fill req Details, and Req details are name email password"
-        })
-    }
+    
     const userExist = await User.findOne({ email })
     if (userExist) {
         return res.status(409).json({
@@ -27,11 +23,7 @@ const register = async (req, res) => {
 }
 const login = async (req, res) => {
     const { email, password } = req.body
-    if (!email || !password) {
-        return res.status(400).json({
-            msg: "Please fill all details"
-        })
-    }
+    
     const user = await User.findOne({ email })
     if (user && await bcrypt.compare(password, user.password)) {
         const accessToken = genrateAccessToken(user._id)
@@ -48,7 +40,7 @@ const login = async (req, res) => {
     }
 
 }
-const refreshToken = (req, res) => {
+const refreshToken = async(req, res) => {
 
     //Req body se Token 
     //     const token=req.body.refreshToken
@@ -69,7 +61,7 @@ const refreshToken = (req, res) => {
             msg: "Invalid Refersh token"
         })
     }
-    let decoded = jwt.verify(token, process.removeListener.JWT_REFRESH_SECRET)
+    let decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
     const user = await User.findById(decoded.id)
     if(!user){
         return res.status(200).json("No user find")
